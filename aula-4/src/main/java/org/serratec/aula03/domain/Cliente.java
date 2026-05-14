@@ -1,49 +1,49 @@
 package org.serratec.aula03.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
-@Table (name="cliente")
-public class Cliente {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_cliente")
+@Table(name = "cliente")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Cliente extends PessoaBase {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente")
     private Long id;
 
-    @Size (max = 60, message = "O máximo de caracteres é 60")
-    @Column(name="nome", nullable=true, length=60)
+    @NotBlank(message = "O nome não pode ser vazio")
+    @Size(max = 60, message = "O máximo de caracteres é 60")
+    @Column(name = "nome", nullable = false, length = 60)
     private String nome;
 
-    @NotBlank (message = "O campo não pode ser nulo")
-    @CPF (message = "CPF inválido ou já cadastrado")
-    @Column(name="cpf",  nullable=false, length=11, unique=true)
-    private String cpf;
-
-    @NotBlank (message = "O campo não pode ser nulo")
-    @Size (max = 50, message = "O máximo de caracteres é 50")
-    @Email (message = "O campo não foi preenchido com um e-mail")
-    @Column(name="email", nullable=false, length=50)
+    @NotBlank(message = "O campo email não pode ser vazio")
+    @Size(max = 50, message = "O máximo de caracteres é 50")
+    @Email(message = "O campo não foi preenchido com um e-mail válido")
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @NotNull (message = "O campo não pode ser nulo")
-    @Column(name="data_nascimento", nullable=false)
+    @NotNull(message = "A data de nascimento não pode ser nula")
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
-    public Cliente(Long id, String nome, String cpf, String email, LocalDate dataNascimento) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.email = email;
-        this.dataNascimento = dataNascimento;
-    }
+    @Valid
+    @Embedded
+    private DocumentoCliente documentoCliente;
 
     public Cliente() {
+    }
+
+    public Cliente(Long id, String nome, String email, LocalDate dataNascimento, DocumentoCliente documentoCliente) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.dataNascimento = dataNascimento;
+        this.documentoCliente = documentoCliente;
     }
 
     public Long getId() {
@@ -62,13 +62,6 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
 
     public String getEmail() {
         return email;
@@ -84,5 +77,13 @@ public class Cliente {
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public DocumentoCliente getDocumentoCliente() {
+        return documentoCliente;
+    }
+
+    public void setDocumentoCliente(DocumentoCliente documentoCliente) {
+        this.documentoCliente = documentoCliente;
     }
 }

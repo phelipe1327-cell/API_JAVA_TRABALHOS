@@ -50,8 +50,8 @@ public class ClienteController {
 
     @PostMapping
     public ResponseEntity<Cliente> salvar(@Valid @RequestBody Cliente cliente) {
-        clienteRepository.save(cliente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
     }
 
     @PutMapping("/{id}")
